@@ -17,6 +17,10 @@
 /** OPERATORNAKLIK ACTIVATION */
 function p596979_operatornaklik_plugin_activated()
 {
+    if (!function_exists('is_plugin_active')) {
+        include_once(ABSPATH . 'wp-admin/includes/plugin.php');
+    }
+
     if (is_plugin_active('woocommerce/woocommerce.php')) {
         get_option("OPERATORNAKLIK_ACCESS_TOKEN")
             ? update_option('OPERATORNAKLIK_ACCESS_TOKEN', bin2hex(random_bytes(20)))
@@ -107,6 +111,10 @@ register_activation_hook(__FILE__, 'p596979_operatornaklik_plugin_activated');
 /** OPERATORNAKLIK DEACTIVATION */
 function p596979_operatornaklik_plugin_deactivated()
 {
+    if (!function_exists('is_plugin_active')) {
+        include_once(ABSPATH . 'wp-admin/includes/plugin.php');
+    }
+
     wp_remote_post('https://api.operatornaklik.cz/eshop/uninstall', [
         'body' => json_encode([
             'eshopUrl' => get_site_url(),
@@ -128,8 +136,7 @@ function p596979_operatornaklik_add_inline_script()
         $user_info = get_userdata($current_user_id);
 
         $name = $user_info->user_login ?: '';
-        $telephone = get_user_meta($current_user_id, 'phone_number', true)
-            ? get_user_meta($current_user_id, 'phone_number', true) : '';
+        $telephone = get_user_meta($current_user_id, 'phone_number', true) ?: '';
         $email = $user_info->user_email ?:  '';
         $id = password_hash($name . $email . $telephone, PASSWORD_BCRYPT, [
             'salt' => get_option('OPERATORNAKLIK_ACCESS_TOKEN'),
@@ -165,8 +172,11 @@ add_action('wp_enqueue_scripts', 'p596979_operatornaklik_add_script');
 
 
 /** API ENDPOINTS */
+if (!function_exists('is_plugin_active')) {
+    include_once(ABSPATH . 'wp-admin/includes/plugin.php');
+}
+
 if (is_plugin_active('woocommerce/woocommerce.php')) {
     require_once(plugin_dir_path(__FILE__) . 'class.operatornaklik-rest-api.php');
     add_action('rest_api_init', ['Operatornaklik_REST_API', 'init']);
 }
-

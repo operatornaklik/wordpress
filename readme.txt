@@ -4,7 +4,7 @@ Tags: livechat, live chat, messaging, live support, chat widget, customer care, 
 Requires at least: 5.6
 Tested up to: 6.0.1
 Requires PHP: 7.0
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
