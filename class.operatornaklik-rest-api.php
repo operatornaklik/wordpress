@@ -195,7 +195,7 @@ class Operatornaklik_REST_API {
 
 		$results = [];
 		foreach (WC()->payment_gateways->get_available_payment_gateways() as $gateway) {
-			$results['shippingMethods'][] = [
+			$results['paymentMethods'][] = [
 				'name' => $gateway->get_method_title(),
 //				'all' => json_decode(wp_json_encode($gateway), true),
 			];
