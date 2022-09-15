@@ -243,15 +243,17 @@ class Operatornaklik_REST_API {
 			$price = strval(number_format(floatval(wc_get_price_including_tax($product)), 2, '.', ''));
 			$urlImage = strval(wp_get_attachment_url(get_post_thumbnail_id($product->get_id())));
 
-//			$items[$id] = $product->get_data();
-			$items[$id]['itemId'] = strval($product->get_id());
-			$items[$id]['itemType'] = $product->get_type();
-			$items[$id]['name'] = $product->get_name();
-			$items[$id]['amount'] = strval($itemObj->get_data()['quantity']);
-			$items[$id]['status'] = ['name' => $product->get_stock_status()];
-			$items[$id]['itemPrice'] = ['withVat' => $price];
-			$items[$id]['url'] = $product->get_permalink();
-			$items[$id]['url_img'] = $urlImage;
+			$items[]= [
+				'id' => strval($product->get_id()),
+				'type' => $product->get_type(),
+				'name' => $product->get_name(),
+				'amount' => strval($itemObj->get_data()['quantity']),
+				'status' => ['name' => $product->get_stock_status()],
+				'price' => ['withVat' => $price],
+				'url' => $product->get_permalink(),
+				'url_img' => $urlImage,
+//				'all' => $product->get_data(),
+			];
 		}
 
 		$orderData = $result->get_data();
@@ -268,11 +270,11 @@ class Operatornaklik_REST_API {
 			'shipping' => ['name' => $result->get_shipping_method()],
 			'paymentMethod' => ['name' => $orderData['payment_method_title']],
 			'status' => ['name' => $result->get_status()],
+			'billingAddress' => self::orderAddress('billing', $orderData),
+			'deliveryAddress' => self::orderAddress('shipping', $orderData),
 			'items' => $items,
+//			'all' => $orderData,
 		];
-
-		$resultData['billingAddress'] = self::orderAddress('billing', $orderData);
-		$resultData['deliveryAddress'] = self::orderAddress('shipping', $orderData);
 
 		return $resultData;
 	}
